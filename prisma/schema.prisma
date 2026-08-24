@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  SUPERVISOR
+  TECHNICIAN
+}
+
+enum CrewStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum WorkOrderStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum WorkOrderPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  password         String
+  role             UserRole @default(TECHNICIAN)
+  createdAt        DateTime @default(now())
+  supervisedCrews  Crew[]   @relation("CrewSupervisor")
+}
+
+model Crew {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  status       CrewStatus @default(ACTIVE)
+  supervisorId String?
+  supervisor   User?      @relation("CrewSupervisor", fields: [supervisorId], references: [id], onDelete: SetNull)
+  workOrders   WorkOrder[]
+  createdAt    DateTime   @default(now())
+}
+
+model WorkOrder {
+  id             String            @id @default(cuid())
+  orderNumber    String            @unique
+  title          String
+  description    String
+  address        String
+  latitude       Decimal           @db.Decimal(10, 7)
+  longitude      Decimal           @db.Decimal(10, 7)
+  priority       WorkOrderPriority @default(MEDIUM)
+  status         WorkOrderStatus   @default(PENDING)
+  assignedCrewId String?
+  assignedCrew   Crew?             @relation(fields: [assignedCrewId], references: [id], onDelete: SetNull)
+  createdAt      DateTime          @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([assignedCrewId])
+  @@index([createdAt])
+}

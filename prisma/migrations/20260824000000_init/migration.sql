@@ -1,0 +1,16 @@
+CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'SUPERVISOR', 'TECHNICIAN');
+CREATE TYPE "CrewStatus" AS ENUM ('ACTIVE', 'INACTIVE');
+CREATE TYPE "WorkOrderStatus" AS ENUM ('PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+CREATE TYPE "WorkOrderPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
+CREATE TABLE "User" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "email" TEXT NOT NULL, "password" TEXT NOT NULL, "role" "UserRole" NOT NULL DEFAULT 'TECHNICIAN', "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "User_pkey" PRIMARY KEY ("id"));
+CREATE TABLE "Crew" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "status" "CrewStatus" NOT NULL DEFAULT 'ACTIVE', "supervisorId" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "Crew_pkey" PRIMARY KEY ("id"));
+CREATE TABLE "WorkOrder" ("id" TEXT NOT NULL, "orderNumber" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT NOT NULL, "address" TEXT NOT NULL, "latitude" DECIMAL(10,7) NOT NULL, "longitude" DECIMAL(10,7) NOT NULL, "priority" "WorkOrderPriority" NOT NULL DEFAULT 'MEDIUM', "status" "WorkOrderStatus" NOT NULL DEFAULT 'PENDING', "assignedCrewId" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "startedAt" TIMESTAMP(3), "completedAt" TIMESTAMP(3), CONSTRAINT "WorkOrder_pkey" PRIMARY KEY ("id"));
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "Crew_name_key" ON "Crew"("name");
+CREATE UNIQUE INDEX "WorkOrder_orderNumber_key" ON "WorkOrder"("orderNumber");
+CREATE INDEX "WorkOrder_status_idx" ON "WorkOrder"("status");
+CREATE INDEX "WorkOrder_priority_idx" ON "WorkOrder"("priority");
+CREATE INDEX "WorkOrder_assignedCrewId_idx" ON "WorkOrder"("assignedCrewId");
+CREATE INDEX "WorkOrder_createdAt_idx" ON "WorkOrder"("createdAt");
+ALTER TABLE "Crew" ADD CONSTRAINT "Crew_supervisorId_fkey" FOREIGN KEY ("supervisorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "WorkOrder" ADD CONSTRAINT "WorkOrder_assignedCrewId_fkey" FOREIGN KEY ("assignedCrewId") REFERENCES "Crew"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -1,0 +1,29 @@
+services:
+  api:
+    build: .
+    ports: ['3000:3000']
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://workops:workops_password@postgres:5432/workops?schema=public
+      JWT_SECRET: docker_demo_secret_change_before_any_real_deployment
+      JWT_EXPIRES_IN: 1d
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: workops
+      POSTGRES_USER: workops
+      POSTGRES_PASSWORD: workops_password
+    ports: ['5432:5432']
+    volumes: ['postgres_data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workops -d workops']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  postgres_data:
