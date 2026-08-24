@@ -37,6 +37,34 @@ const router = Router();
  *     security: [{ bearerAuth: [] }]
  *     summary: Get work order KPIs
  *     responses: { '200': { description: Statistics } }
+ * /work-orders/{id}:
+ *   get:
+ *     tags: [Work orders]
+ *     security: [{ bearerAuth: [] }]
+ *     summary: Get a work order by ID
+ *     responses: { '200': { description: Work order found } }
+ *   patch:
+ *     tags: [Work orders]
+ *     security: [{ bearerAuth: [] }]
+ *     summary: Update a work order
+ *     responses: { '200': { description: Work order updated } }
+ *   delete:
+ *     tags: [Work orders]
+ *     security: [{ bearerAuth: [] }]
+ *     summary: Delete a work order (admin only)
+ *     responses: { '204': { description: Work order deleted } }
+ * /work-orders/{id}/assign:
+ *   patch:
+ *     tags: [Work orders]
+ *     security: [{ bearerAuth: [] }]
+ *     summary: Assign a work order to a crew
+ *     responses: { '200': { description: Work order assigned } }
+ * /work-orders/{id}/status:
+ *   patch:
+ *     tags: [Work orders]
+ *     security: [{ bearerAuth: [] }]
+ *     summary: Update a work order status
+ *     responses: { '200': { description: Status updated } }
  */
 router.use(authenticate);
 router.get('/', asyncHandler(listWorkOrders));

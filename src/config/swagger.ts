@@ -1,4 +1,8 @@
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import swaggerJsdoc from 'swagger-jsdoc';
+
+const currentDirectory = dirname(fileURLToPath(import.meta.url));
 
 export const swaggerSpec = swaggerJsdoc({
   definition: {
@@ -13,5 +17,5 @@ export const swaggerSpec = swaggerJsdoc({
       securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' } },
     },
   },
-  apis: ['./src/routes/*.ts'],
+  apis: [join(process.cwd(), 'src/routes/*.ts'), join(currentDirectory, '../routes/*.js')],
 });
