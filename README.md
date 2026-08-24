@@ -53,6 +53,7 @@ docker compose up --build
 ```
 
 The API will be available at `http://localhost:3000`, health check at `/health`, and interactive documentation at `http://localhost:3000/api-docs`.
+PostgreSQL is exposed on host port `5433` to avoid conflicting with a local PostgreSQL service.
 
 For a seeded demo database, run this in a second terminal after the containers are healthy:
 
