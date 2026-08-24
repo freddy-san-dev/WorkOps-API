@@ -99,6 +99,12 @@ npm run format:check    # verify formatting
 npm run prisma:seed     # load fictional demo data
 ```
 
+## API documentation
+
+Interactive OpenAPI documentation is available at `/api-docs`.
+
+![WorkOps API Swagger documentation](docs/images/swagger-overview.png)
+
 ## Main endpoints
 
 | Method           | Endpoint                         | Access                  | Purpose                      |
